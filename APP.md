@@ -61,5 +61,16 @@ Every ID was verified with `https://noembed.com/embed?url=https://www.youtube.co
 ## Dev workflow
 1. Edit `index.html`. 2. Extract the `<script>` body and run `node --check`. 3. Bump the "updated" date in the footer. 4. Commit + push to `main` (Pages redeploys in ~1 min). 5. Update this file.
 
+## iPhone app (`iOS/`)
+- `iOS/Lift.xcodeproj` (Xcode 16+ format, folder-synced: every file in `iOS/Lift/` is included automatically).
+- `LiftApp.swift`: SwiftUI + WKWebView. Loads `siteURL` (GitHub Pages); on failure loads bundled `iOS/Lift/index.html`
+  via `loadHTMLString(baseURL: siteURL)` so localStorage (same origin) is shared. Inline video playback on.
+  External links open in Safari/YouTube. Pull-to-refresh reloads.
+- Backup bridge: `backup()` in the page posts `{type:"backup", name, json}` to `window.webkit.messageHandlers.lift`;
+  Swift writes a temp file and shows the share sheet. In Safari it falls back to a normal download.
+- Bundle ID `com.ahmedbalani.lift`, free Personal Team signing (reinstall every 7 days). Steps in `iOS/README.md`.
+- Keep `iOS/Lift/index.html` in sync with `index.html` when rebuilding.
+
 ## Changelog
 - **2026-11-17** — v1: 5-day split, per-set weight/rep logging with last-time prefill, add-weight tips (double progression), rest timer, muscle maps, embedded verified form videos, history + heaviest set, backup/restore.
+- **2026-11-17** — iPhone app wrapper in `iOS/` (WKWebView, offline fallback, share-sheet backup, dumbbell icon). Page `backup()` now uses the native bridge when present.

@@ -279,9 +279,17 @@ function mergeLogs(a, b) {           // per date, newest edit (t) wins
 
 /* ---------- Backup / restore ---------- */
 function backup() {
-  const blob = new Blob([JSON.stringify({ app: "lift5", v: 1, saved: new Date().toISOString(), logs }, null, 1)], { type: "application/json" });
+  const json = JSON.stringify({ app: "lift5", v: 1, saved: new Date().toISOString(), logs }, null, 1);
+  const name = "lift-backup-" + today() + ".json";
+  try {   // inside the iPhone app: hand the file to iOS's share sheet
+    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.lift) {
+      window.webkit.messageHandlers.lift.postMessage({ type: "backup", name: name, json: json });
+      LS.set("lift5LastBackup", today()); renderBackup(); return;
+    }
+  } catch (e) {}
+  const blob = new Blob([json], { type: "application/json" });
   const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob); a.download = "lift-backup-" + today() + ".json";
+  a.href = URL.createObjectURL(blob); a.download = name;
   document.body.appendChild(a); a.click(); a.remove();
   LS.set("lift5LastBackup", today()); renderBackup(); toast("Backup saved to your Files / Downloads");
 }

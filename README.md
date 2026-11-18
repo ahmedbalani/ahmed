@@ -13,3 +13,5 @@ A simple phone workout app for a push / pull / legs / upper / lower split.
 Tip: in Safari, tap Share → **Add to Home Screen** so it opens like a normal app.
 
 One file (`index.html`), no build step. See `APP.md` for how it's built.
+
+**iPhone app:** see `iOS/README.md` to install it on your phone with Xcode.
