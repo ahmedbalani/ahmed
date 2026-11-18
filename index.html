@@ -123,7 +123,7 @@ summary{cursor:pointer;color:var(--dim);font-size:.86rem}
   <p id="bkinfo"></p>
   <div class="row"><button id="bkbtn">Save backup</button><label>Restore<input type="file" id="rsfile" accept=".json,application/json"></label></div>
 </div>
-<div class="foot">updated 2026-11-17<br>Muscle diagrams adapted from react-native-body-highlighter<br>MIT License © 2022 ELABBASSI Hicham</div>
+<div class="foot">updated 2026-11-17b<br>Muscle diagrams adapted from react-native-body-highlighter<br>MIT License © 2022 ELABBASSI Hicham</div>
 </div>
 <div id="timer"><div class="tt"><small id="tlabel">Rest</small><b id="tclock">0:00</b></div><button id="tplus">+30s</button><button id="tskip">Done</button></div>
 <div id="toast"></div>
@@ -167,47 +167,47 @@ const X = (name, sets, lo, hi, big, cue, feel, primary, secondary, extra) =>
 const DAYS = [
   { k: "push", t: "Push", sub: "Chest · Shoulders · Triceps", ex: [
     X("Barbell Bench Press", 4, 6, 8, true, "Shoulder blades pinched, feet planted. Lower to mid-chest under control, press up and slightly back.", "your chest driving the bar — not your shoulders taking over", ["chest"], ["shoulders", "triceps"]),
-    X("Incline Dumbbell Press", 3, 8, 10, false, "Bench at about 30°. Elbows ~45° from your body, lower slow to a deep stretch.", "your upper chest, just under the collarbone", ["chest", "shoulders"], ["triceps"]),
-    X("Seated Dumbbell Shoulder Press", 3, 8, 10, false, "Back flat on the pad, ribs down. Press up and slightly in; don't clang the bells.", "the front and side of your shoulders", ["shoulders"], ["triceps", "traps"]),
-    X("Cable Lateral Raise", 3, 12, 15, false, "Cable from low and behind you. Lead with the elbow, raise to shoulder height, lower slow.", "the side of your shoulder — not your traps", ["shoulders"], []),
-    X("Cable Fly", 3, 12, 15, false, "Slight bend in the elbows, big hugging arc. Get a stretch, squeeze the chest when hands meet.", "a stretch across your chest, then a hard squeeze", ["chest"], ["shoulders"]),
-    X("Rope Triceps Pushdown", 3, 10, 12, false, "Elbows pinned to your sides. Push down and spread the rope apart at the bottom.", "the back of your upper arm", ["triceps"], ["forearms"]),
-    X("Overhead Cable Triceps Extension", 2, 12, 15, false, "Face away from the cable, elbows by your ears. Stretch deep behind your head, then extend.", "a deep stretch in the back of your arm", ["triceps"], [])
+    X("Incline Dumbbell Press", 4, 8, 10, false, "Bench at about 30°. Elbows ~45° from your body, lower slow to a deep stretch.", "your upper chest, just under the collarbone", ["chest", "shoulders"], ["triceps"]),
+    X("Seated Dumbbell Shoulder Press", 4, 8, 10, false, "Back flat on the pad, ribs down. Press up and slightly in; don't clang the bells.", "the front and side of your shoulders", ["shoulders"], ["triceps", "traps"]),
+    X("Cable Lateral Raise", 4, 12, 15, false, "Cable from low and behind you. Lead with the elbow, raise to shoulder height, lower slow.", "the side of your shoulder — not your traps", ["shoulders"], []),
+    X("Cable Fly", 4, 12, 15, false, "Slight bend in the elbows, big hugging arc. Get a stretch, squeeze the chest when hands meet.", "a stretch across your chest, then a hard squeeze", ["chest"], ["shoulders"]),
+    X("Rope Triceps Pushdown", 4, 10, 12, false, "Elbows pinned to your sides. Push down and spread the rope apart at the bottom.", "the back of your upper arm", ["triceps"], ["forearms"]),
+    X("Overhead Cable Triceps Extension", 4, 12, 15, false, "Face away from the cable, elbows by your ears. Stretch deep behind your head, then extend.", "a deep stretch in the back of your arm", ["triceps"], [])
   ]},
   { k: "pull", t: "Pull", sub: "Back · Biceps", ex: [
     X("Pull-Up or Lat Pulldown", 4, 6, 10, true, "Start from a full hang/stretch. Pull elbows down to your ribs, chest up to the bar.", "the wings of your back under your armpits", ["lats", "upperback"], ["biceps", "forearms"], { bw: true }),
-    X("Barbell Row", 3, 8, 10, true, "Hinge to ~45°, back flat. Row the bar to your lower ribs, pause, lower under control.", "your mid-back squeezing between the shoulder blades", ["upperback", "lats"], ["lowerback", "biceps", "reardelts"]),
-    X("Seated Cable Row", 3, 10, 12, false, "Sit tall, let the weight stretch you forward, then row to your belly and squeeze.", "your mid-back and lats", ["upperback", "lats"], ["biceps"]),
-    X("Face Pull", 3, 15, 15, false, "Rope at face height. Pull toward your eyes, elbows high, rotate hands back like a double-biceps pose.", "the back of your shoulders and upper back", ["reardelts", "upperback"], ["traps"]),
-    X("Barbell or EZ-Bar Curl", 3, 8, 10, false, "Elbows still by your sides. No swinging — curl up, lower slow for 2–3 seconds.", "your biceps doing all the lifting", ["biceps"], ["forearms"]),
-    X("Incline Dumbbell Curl", 2, 10, 12, false, "Lie back on a 45–60° bench, arms hanging straight. Curl without letting elbows drift forward.", "a big stretch in your biceps at the bottom", ["biceps"], []),
-    X("Hammer Curl", 2, 10, 12, false, "Palms facing each other, thumbs up. Curl straight up, controlled down.", "the outer biceps and top of your forearm", ["biceps", "forearms"], [])
+    X("Barbell Row", 4, 8, 10, true, "Hinge to ~45°, back flat. Row the bar to your lower ribs, pause, lower under control.", "your mid-back squeezing between the shoulder blades", ["upperback", "lats"], ["lowerback", "biceps", "reardelts"]),
+    X("Seated Cable Row", 4, 10, 12, false, "Sit tall, let the weight stretch you forward, then row to your belly and squeeze.", "your mid-back and lats", ["upperback", "lats"], ["biceps"]),
+    X("Face Pull", 4, 15, 15, false, "Rope at face height. Pull toward your eyes, elbows high, rotate hands back like a double-biceps pose.", "the back of your shoulders and upper back", ["reardelts", "upperback"], ["traps"]),
+    X("Barbell or EZ-Bar Curl", 4, 8, 10, false, "Elbows still by your sides. No swinging — curl up, lower slow for 2–3 seconds.", "your biceps doing all the lifting", ["biceps"], ["forearms"]),
+    X("Incline Dumbbell Curl", 4, 10, 12, false, "Lie back on a 45–60° bench, arms hanging straight. Curl without letting elbows drift forward.", "a big stretch in your biceps at the bottom", ["biceps"], []),
+    X("Hammer Curl", 4, 10, 12, false, "Palms facing each other, thumbs up. Curl straight up, controlled down.", "the outer biceps and top of your forearm", ["biceps", "forearms"], [])
   ]},
   { k: "legs", t: "Legs", sub: "Quads · Hamstrings · Glutes · Calves", ex: [
     X("Back Squat", 4, 6, 8, true, "Brace hard, sit down between your heels to at least parallel, drive up through mid-foot.", "your quads and glutes, back staying tight", ["quads", "glutes"], ["adductors", "lowerback", "abs"]),
-    X("Romanian Deadlift", 3, 8, 10, true, "Soft knees, push hips back, bar slides down your thighs until a strong hamstring stretch.", "a big stretch in the back of your thighs — not your lower back", ["hamstrings", "glutes"], ["lowerback", "forearms"]),
-    X("Leg Press", 3, 10, 12, false, "Feet mid-platform. Lower until knees are deep but your lower back stays on the pad.", "your quads, with glutes helping", ["quads", "glutes"], ["adductors"]),
-    X("Leg Curl", 3, 10, 12, false, "Hips pressed into the pad. Curl all the way, pause, lower slowly.", "the back of your thighs", ["hamstrings"], ["calves"]),
-    X("Leg Extension", 2, 12, 15, false, "Sit back, grip the handles. Squeeze hard at the top for a second.", "the front of your thighs burning", ["quads"], []),
+    X("Romanian Deadlift", 4, 8, 10, true, "Soft knees, push hips back, bar slides down your thighs until a strong hamstring stretch.", "a big stretch in the back of your thighs — not your lower back", ["hamstrings", "glutes"], ["lowerback", "forearms"]),
+    X("Leg Press", 4, 10, 12, false, "Feet mid-platform. Lower until knees are deep but your lower back stays on the pad.", "your quads, with glutes helping", ["quads", "glutes"], ["adductors"]),
+    X("Leg Curl", 4, 10, 12, false, "Hips pressed into the pad. Curl all the way, pause, lower slowly.", "the back of your thighs", ["hamstrings"], ["calves"]),
+    X("Leg Extension", 4, 12, 15, false, "Sit back, grip the handles. Squeeze hard at the top for a second.", "the front of your thighs burning", ["quads"], []),
     X("Standing Calf Raise", 4, 10, 15, false, "Full stretch at the bottom with a 1-second pause, then all the way up on your toes.", "your calves — pause, don't bounce", ["calves"], [])
   ]},
   { k: "upper", t: "Upper", sub: "Chest · Back · Arms", ex: [
-    X("Incline Barbell Press", 3, 8, 10, true, "Bench at about 30°. Lower to the upper chest, press up and slightly back.", "your upper chest", ["chest", "shoulders"], ["triceps"]),
-    X("Chest-Supported Row", 3, 8, 10, false, "Chest on the pad — no back strain. Row elbows back and squeeze the shoulder blades.", "your mid-back between the shoulder blades", ["upperback", "lats"], ["biceps", "reardelts"]),
-    X("Machine Chest Press", 2, 10, 12, false, "Handles at mid-chest. Push out, control the return for a full stretch.", "your chest", ["chest"], ["triceps", "shoulders"]),
-    X("Neutral-Grip Lat Pulldown", 3, 10, 12, false, "Palms facing each other. Pull to your upper chest, elbows down to your sides.", "your lats", ["lats"], ["biceps", "upperback"]),
-    X("Dumbbell Lateral Raise", 3, 12, 15, false, "Slight lean forward, lead with elbows, stop at shoulder height. Light and strict.", "the side of your shoulder", ["shoulders"], []),
-    X("Cable Curl (superset)", 3, 12, 12, false, "Superset with the pushdown below: do a set of curls, then go straight to pushdowns, then rest.", "your biceps", ["biceps"], ["forearms"], { ss: true }),
-    X("Cable Pushdown (superset)", 3, 12, 12, false, "Straight from the curls. Elbows pinned, full lockout. Rest after this one.", "the back of your upper arm", ["triceps"], [])
+    X("Incline Barbell Press", 4, 8, 10, true, "Bench at about 30°. Lower to the upper chest, press up and slightly back.", "your upper chest", ["chest", "shoulders"], ["triceps"]),
+    X("Chest-Supported Row", 4, 8, 10, false, "Chest on the pad — no back strain. Row elbows back and squeeze the shoulder blades.", "your mid-back between the shoulder blades", ["upperback", "lats"], ["biceps", "reardelts"]),
+    X("Machine Chest Press", 4, 10, 12, false, "Handles at mid-chest. Push out, control the return for a full stretch.", "your chest", ["chest"], ["triceps", "shoulders"]),
+    X("Neutral-Grip Lat Pulldown", 4, 10, 12, false, "Palms facing each other. Pull to your upper chest, elbows down to your sides.", "your lats", ["lats"], ["biceps", "upperback"]),
+    X("Dumbbell Lateral Raise", 4, 12, 15, false, "Slight lean forward, lead with elbows, stop at shoulder height. Light and strict.", "the side of your shoulder", ["shoulders"], []),
+    X("Cable Curl (superset)", 4, 12, 12, false, "Superset with the pushdown below: do a set of curls, then go straight to pushdowns, then rest.", "your biceps", ["biceps"], ["forearms"], { ss: true }),
+    X("Cable Pushdown (superset)", 4, 12, 12, false, "Straight from the curls. Elbows pinned, full lockout. Rest after this one.", "the back of your upper arm", ["triceps"], [])
   ]},
   { k: "lower", t: "Lower", sub: "Hinge · Glutes · Core", ex: [
-    X("Deadlift or Trap-Bar Deadlift", 3, 5, 5, true, "Bar over mid-foot, brace, push the floor away. Hips and shoulders rise together.", "your glutes and hamstrings, back flat and tight", ["glutes", "hamstrings", "lowerback"], ["quads", "traps", "forearms"]),
-    X("Bulgarian Split Squat", 3, 8, 10, false, "Back foot on a bench. Drop straight down, front heel stays planted. Weight & reps per leg.", "the front thigh and glute of your front leg", ["quads", "glutes"], ["adductors"]),
-    X("Hack Squat or Front Squat", 3, 8, 10, true, "Upright torso, knees travel forward. Go deep and stay controlled.", "your quads", ["quads"], ["glutes"]),
-    X("Seated Leg Curl", 3, 12, 12, false, "Pad above your heels, thigh pad snug. Curl fully, slow on the way up.", "the back of your thighs", ["hamstrings"], []),
-    X("Hip Thrust", 3, 10, 10, false, "Upper back on a bench, bar on your hips. Drive up, chin tucked, squeeze glutes 1 second at the top.", "your glutes — not your lower back", ["glutes"], ["hamstrings"]),
-    X("Seated Calf Raise", 3, 15, 15, false, "Full stretch at the bottom, pause, then press all the way up.", "your lower calves", ["calves"], []),
-    X("Hanging Leg Raise", 3, 10, 15, false, "Hang still, no swinging. Curl your pelvis up, lower slowly. Leave weight blank.", "your lower abs", ["abs"], ["forearms"], { bw: true })
+    X("Deadlift or Trap-Bar Deadlift", 4, 5, 5, true, "Bar over mid-foot, brace, push the floor away. Hips and shoulders rise together.", "your glutes and hamstrings, back flat and tight", ["glutes", "hamstrings", "lowerback"], ["quads", "traps", "forearms"]),
+    X("Bulgarian Split Squat", 4, 8, 10, false, "Back foot on a bench. Drop straight down, front heel stays planted. Weight & reps per leg.", "the front thigh and glute of your front leg", ["quads", "glutes"], ["adductors"]),
+    X("Hack Squat or Front Squat", 4, 8, 10, true, "Upright torso, knees travel forward. Go deep and stay controlled.", "your quads", ["quads"], ["glutes"]),
+    X("Seated Leg Curl", 4, 12, 12, false, "Pad above your heels, thigh pad snug. Curl fully, slow on the way up.", "the back of your thighs", ["hamstrings"], []),
+    X("Hip Thrust", 4, 10, 10, false, "Upper back on a bench, bar on your hips. Drive up, chin tucked, squeeze glutes 1 second at the top.", "your glutes — not your lower back", ["glutes"], ["hamstrings"]),
+    X("Seated Calf Raise", 4, 15, 15, false, "Full stretch at the bottom, pause, then press all the way up.", "your lower calves", ["calves"], []),
+    X("Hanging Leg Raise", 4, 10, 15, false, "Hang still, no swinging. Curl your pelvis up, lower slowly. Leave weight blank.", "your lower abs", ["abs"], ["forearms"], { bw: true })
   ]}
 ];
 DAYS.forEach(d => d.ex.forEach(e => e.id = d.k + "-" + e.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")));
