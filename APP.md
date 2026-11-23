@@ -84,4 +84,4 @@ Every ID was verified with `https://noembed.com/embed?url=https://www.youtube.co
 - **2026-11-17** — v1: 5-day split, per-set weight/rep logging with last-time prefill, add-weight tips (double progression), rest timer, muscle maps, embedded verified form videos, history + heaviest set, backup/restore.
 - **2026-11-17** — iPhone app wrapper in `iOS/` (WKWebView, offline fallback, share-sheet backup, dumbbell icon). Page `backup()` now uses the native bridge when present.
 - **2026-11-17b** — Every exercise is now 4 sets (user request). Footer stamp 2026-11-17b. Older logs with fewer sets just won't trigger the add-weight tip until a full 4-set session is logged.
-- **2026-11-23** — Added Playwright tests + GitHub Actions. Fixed a bug they found: `pendingRender` was never declared, so leaving a weight/reps box threw an error every time. Footer stamp 2026-11-23.
+- **2026-11-23** — Added Playwright tests + GitHub Actions. Fixed a bug they found: `pendingRender` was never declared, so leaving a weight/reps box threw an error every time. Footer stamp 2026-11-23. Synced the offline copy in `iOS/Lift/index.html`.

@@ -123,7 +123,7 @@ summary{cursor:pointer;color:var(--dim);font-size:.86rem}
   <p id="bkinfo"></p>
   <div class="row"><button id="bkbtn">Save backup</button><label>Restore<input type="file" id="rsfile" accept=".json,application/json"></label></div>
 </div>
-<div class="foot">updated 2026-11-17b<br>Muscle diagrams adapted from react-native-body-highlighter<br>MIT License © 2022 ELABBASSI Hicham</div>
+<div class="foot">updated 2026-11-23<br>Muscle diagrams adapted from react-native-body-highlighter<br>MIT License © 2022 ELABBASSI Hicham</div>
 </div>
 <div id="timer"><div class="tt"><small id="tlabel">Rest</small><b id="tclock">0:00</b></div><button id="tplus">+30s</button><button id="tskip">Done</button></div>
 <div id="toast"></div>
@@ -445,6 +445,7 @@ document.getElementById("tplus").onclick = () => { if (Date.now() > tEnd) tEnd =
 document.getElementById("tskip").onclick = () => { clearInterval(tInt); document.getElementById("timer").classList.remove("show"); };
 
 /* ---------- Events ---------- */
+let pendingRender = false;
 const findEx = id => { for (const d of DAYS) for (const e of d.ex) if (e.id === id) return e; };
 document.addEventListener("click", ev => {
   const t = ev.target.closest("[data-day],[data-open],[data-ck]");
