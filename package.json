@@ -1,0 +1,22 @@
+{
+  "name": "lift",
+  "version": "1.0.0",
+  "description": "Tests for the Lift app",
+  "scripts": {
+    "test": "playwright test",
+    "test:live": "BASE_URL=https://ahmedbalani.github.io/ahmed/ playwright test",
+    "report": "playwright show-report"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ahmedbalani/ahmed.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ahmedbalani/ahmed/issues"
+  },
+  "homepage": "https://github.com/ahmedbalani/ahmed#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.65.1"
+  },
+  "private": true
+}

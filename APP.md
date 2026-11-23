@@ -59,7 +59,7 @@ Every ID was verified with `https://noembed.com/embed?url=https://www.youtube.co
 | Hanging leg raise | -LHetdLNhjI | Testosterone Nation |
 
 ## Dev workflow
-1. Edit `index.html`. 2. Extract the `<script>` body and run `node --check`. 3. Bump the "updated" date in the footer. 4. Commit + push to `main` (Pages redeploys in ~1 min). 5. Update this file.
+1. Edit `index.html`. 2. Extract the `<script>` body and run `node --check`, then `npm test` (Playwright, see below). 3. Bump the "updated" date in the footer. 4. Commit + push to `main` (Pages redeploys in ~1 min). 5. Update this file.
 
 ## iPhone app (`iOS/`)
 - `iOS/Lift.xcodeproj` (Xcode 16+ format, folder-synced: every file in `iOS/Lift/` is included automatically).
@@ -71,7 +71,17 @@ Every ID was verified with `https://noembed.com/embed?url=https://www.youtube.co
 - Bundle ID `com.ahmedbalani.lift`, free Personal Team signing (reinstall every 7 days). Steps in `iOS/README.md`.
 - Keep `iOS/Lift/index.html` in sync with `index.html` when rebuilding.
 
+## Tests (Playwright)
+- `npm install` once, then `npx playwright install chromium webkit`.
+- `npm test` serves the folder on :8080 and runs `tests/app.spec.js` on an iPhone 15 screen in Safari (WebKit) and Chrome.
+- `npm run test:live` runs the same tests against https://ahmedbalani.github.io/ahmed/.
+- `npm run report` opens the last HTML report (screenshots + traces of failures).
+- Covers: 5 tabs load, no JS errors, every exercise 4 sets + has a video, every card opens with 4 set rows/muscle map/video, logging + rest timer + reload persistence, add-weight tip, timer buttons, backup download, no sideways scroll.
+- GitHub Actions (`.github/workflows/tests.yml`) runs them on every push to `main`, and every Monday also against the live site.
+- `package.json`, `tests/`, `.github/` are dev-only; the app is still just `index.html`.
+
 ## Changelog
 - **2026-11-17** — v1: 5-day split, per-set weight/rep logging with last-time prefill, add-weight tips (double progression), rest timer, muscle maps, embedded verified form videos, history + heaviest set, backup/restore.
 - **2026-11-17** — iPhone app wrapper in `iOS/` (WKWebView, offline fallback, share-sheet backup, dumbbell icon). Page `backup()` now uses the native bridge when present.
 - **2026-11-17b** — Every exercise is now 4 sets (user request). Footer stamp 2026-11-17b. Older logs with fewer sets just won't trigger the add-weight tip until a full 4-set session is logged.
+- **2026-11-23** — Added Playwright tests + GitHub Actions. Fixed a bug they found: `pendingRender` was never declared, so leaving a weight/reps box threw an error every time. Footer stamp 2026-11-23.
