@@ -128,3 +128,70 @@ test('fits an iPhone screen (no sideways scrolling)', async ({ page }) => {
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(overflow).toBeLessThanOrEqual(1);
 });
+
+test.describe('backups', () => {
+  const oneLog = () => {
+    const id = DAYS[0].ex[0].id;
+    localStorage.setItem('lift5Logs', JSON.stringify({ [id]: [{ d: '2026-01-01', t: 1, s: [{ w: '135', r: '8', ok: true }] }] }));
+  };
+
+  test('no reminder before anything is logged', async ({ page }) => {
+    await expect(page.locator('#bkwarn')).toBeHidden();
+  });
+
+  test('reminds you when you have logs but no backup, and the button backs up', async ({ page, browserName }) => {
+    await page.evaluate(oneLog);
+    await page.reload();
+    await expect(page.locator('#bkwarn')).toBeVisible();
+    await expect(page.locator('#bkwarn')).toContainText("haven't saved a backup");
+    test.skip(browserName === 'webkit', 'WebKit handles file downloads differently');
+    const [dl] = await Promise.all([page.waitForEvent('download'), page.locator('#bkwarnbtn').click()]);
+    expect(dl.suggestedFilename()).toMatch(/\.json$/);
+    await expect(page.locator('#bkwarn')).toBeHidden();
+  });
+
+  test('reminds you when the last backup is over a week old', async ({ page }) => {
+    await page.evaluate(oneLog);
+    await page.evaluate(() => localStorage.setItem('lift5LastBackup', JSON.stringify('2020-01-01')));
+    await page.reload();
+    await expect(page.locator('#bkwarn')).toContainText('days ago');
+  });
+
+  test('inside the iPhone app: auto-saves after logging, no reminder, and restores when storage is empty', async ({ page }) => {
+    // Pretend to be the iPhone app: record what the page sends to it.
+    await page.addInitScript(() => {
+      window.__sent = [];
+      window.webkit = { messageHandlers: { lift: { postMessage: m => {
+        window.__sent.push(m);
+        if (m.type === 'autosave') setTimeout(() => window.liftAutosaved(), 0);
+      } } } };
+    });
+    await page.reload();
+    const ready = await page.evaluate(() => window.__sent.find(m => m.type === 'ready'));
+    expect(ready).toEqual({ type: 'ready', empty: true });
+
+    await page.locator('#day [data-open]').first().click();
+    await page.locator('#day .set .ck').first().click();
+    await expect.poll(() => page.evaluate(() => window.__sent.filter(m => m.type === 'autosave').length)).toBeGreaterThan(0);
+    const saved = await page.evaluate(() => JSON.parse(window.__sent.filter(m => m.type === 'autosave').pop().json));
+    expect(Object.keys(saved.logs)).toContain('push-barbell-bench-press');
+    await expect(page.locator('#bkinfo')).toContainText('Auto-saved');
+    await expect(page.locator('#bkwarn')).toBeHidden();
+
+    // Storage wiped → the app hands the backup back.
+    await page.evaluate(() => localStorage.clear());
+    await page.reload();
+    await page.evaluate(j => window.liftRestore(j), JSON.stringify(saved));
+    await page.locator('[data-day="push"]').click();
+    await expect(page.locator('.prog')).toContainText('1 / 28 sets today');
+  });
+});
+
+test('iPhone app offline copy is the same as the website', async ({}, testInfo) => {
+  test.skip(testInfo.project.name !== 'iphone-chrome', 'file check only needs to run once');
+  const fs = require('fs'), path = require('path');
+  const root = path.join(__dirname, '..');
+  const site = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+  const app = fs.readFileSync(path.join(root, 'iOS/Lift/index.html'), 'utf8');
+  expect(app === site, 'iOS/Lift/index.html is out of date — copy index.html over it').toBe(true);
+});

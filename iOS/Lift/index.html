@@ -95,6 +95,10 @@ summary{cursor:pointer;color:var(--dim);font-size:.86rem}
 #timer .tt b{font-size:1.6rem;font-variant-numeric:tabular-nums}
 #timer.go{background:#1f4d33ee}
 #timer button{background:var(--card2);border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:10px 12px;font-size:.9rem;cursor:pointer}
+#bkwarn{display:none;margin:12px 0 0;background:#3a2c12;border:1px solid var(--acc2);border-radius:12px;padding:10px 12px;font-size:.85rem;align-items:center;gap:10px}
+#bkwarn.show{display:flex}
+#bkwarn span{flex:1}
+#bkwarn button{background:var(--acc);color:#1a1300;border:0;border-radius:9px;padding:8px 12px;font-weight:600;font-size:.85rem;cursor:pointer}
 #toast{position:fixed;left:50%;top:14px;transform:translateX(-50%);background:var(--card2);border:1px solid var(--line);padding:8px 14px;border-radius:20px;font-size:.85rem;display:none;z-index:9}
 </style>
 </head>
@@ -104,6 +108,7 @@ summary{cursor:pointer;color:var(--dim);font-size:.86rem}
   <h1>Ahmed's <span>5-Day</span> Lift</h1>
   <div class="sync">Your 5-day muscle plan</div>
 </header>
+<div id="bkwarn"><span id="bkwarnt"></span><button id="bkwarnbtn">Save backup</button></div>
 <div class="sched" id="sched"></div>
 <div class="tabs" id="tabs"></div>
 <div id="day"></div>
@@ -113,7 +118,7 @@ summary{cursor:pointer;color:var(--dim);font-size:.86rem}
     <li><b>Double progression:</b> when you hit the top of the rep range on every set, add a little weight next time. The app tells you when.</li>
     <li>Stop most sets with 1–2 reps left in the tank. Take the last set close to failure.</li>
     <li>Rest 2–3 minutes on big lifts and 60–90 seconds on smaller ones. Tick a set and the rest timer starts.</li>
-    <li>Log every set so you can beat last week. Leave weight blank for bodyweight. Tap “Save backup” every week or two.</li>
+    <li>Log every set so you can beat last week. Leave weight blank for bodyweight. In Safari, tap “Save backup” every week (the app reminds you); the iPhone app backs up by itself.</li>
     <li>Every 6–8 weeks, take a lighter week, cutting sets about in half.</li>
     <li>Swap any exercise that causes pain for a similar one.</li>
   </ul>
@@ -123,7 +128,7 @@ summary{cursor:pointer;color:var(--dim);font-size:.86rem}
   <p id="bkinfo"></p>
   <div class="row"><button id="bkbtn">Save backup</button><label>Restore<input type="file" id="rsfile" accept=".json,application/json"></label></div>
 </div>
-<div class="foot">updated 2026-11-23<br>Muscle diagrams adapted from react-native-body-highlighter<br>MIT License © 2022 ELABBASSI Hicham</div>
+<div class="foot">updated 2026-11-23b<br>Muscle diagrams adapted from react-native-body-highlighter<br>MIT License © 2022 ELABBASSI Hicham</div>
 </div>
 <div id="timer"><div class="tt"><small id="tlabel">Rest</small><b id="tclock">0:00</b></div><button id="tplus">+30s</button><button id="tskip">Done</button></div>
 <div id="toast"></div>
@@ -301,15 +306,45 @@ function restore(file) {
       if (!data || typeof data.logs !== "object") throw 0;
       for (const id in data.logs) logs[id] = mergeLogs(logs[id], data.logs[id]);
       LS.set("lift5Logs", logs); for (const k in draft) delete draft[k];
-      render(); toast("✓ Backup restored");
+      autoBackup(); render(); renderBackup(); toast("✓ Backup restored");
     } catch (e) { toast("That file isn't a Lift backup"); }
   };
   r.readAsText(file);
 }
+/* ---------- Automatic backup (iPhone app only) ----------
+   The Lift iPhone app saves a copy of your logs into Files → On My iPhone → Lift after every change,
+   and puts them back if the app's storage is ever wiped. In Safari this does nothing. */
+const native = () => { try { return window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.lift; } catch (e) { return null; } };
+let autoT = null;
+function autoBackup() {
+  const n = native(); if (!n) return;
+  clearTimeout(autoT);
+  autoT = setTimeout(() => {
+    try { n.postMessage({ type: "autosave", json: JSON.stringify({ app: "lift5", v: 1, saved: new Date().toISOString(), logs }) }); } catch (e) {}
+  }, 800);
+}
+window.liftAutosaved = () => { LS.set("lift5LastAuto", today()); renderBackup(); };   // called by the iPhone app
+window.liftRestore = json => {                                                          // called by the iPhone app
+  try {
+    const data = typeof json === "string" ? JSON.parse(json) : json;
+    if (!data || typeof data.logs !== "object") return false;
+    for (const id in data.logs) logs[id] = mergeLogs(logs[id], data.logs[id]);
+    LS.set("lift5Logs", logs); for (const k in draft) delete draft[k];
+    render(); renderBackup(); toast("✓ Your logs were restored from the automatic backup");
+    return true;
+  } catch (e) { return false; }
+};
+const daysSince = d => d ? Math.floor((new Date(today()) - new Date(d)) / 864e5) : Infinity;
 function renderBackup() {
-  const lb = LS.get("lift5LastBackup", null);
+  const lb = LS.get("lift5LastBackup", null), la = LS.get("lift5LastAuto", null);
   const n = Object.values(logs).reduce((a, l) => a + l.length, 0);
-  document.getElementById("bkinfo").textContent = n ? (lb ? "Last backup: " + fmtDate(lb) : "No backup yet — your history is only on this phone.") : "Nothing logged yet.";
+  const auto = !!native() && daysSince(la) <= 1;
+  document.getElementById("bkinfo").textContent = !n ? "Nothing logged yet." :
+    auto ? "✓ Auto-saved to Files → On My iPhone → Lift. Last saved " + (la === today() ? "today" : fmtDate(la)) + "." :
+    lb ? "Last backup: " + fmtDate(lb) : "No backup yet — your history is only on this phone.";
+  const age = daysSince(lb), warn = n > 0 && !auto && age > 7;
+  document.getElementById("bkwarn").classList.toggle("show", warn);
+  if (warn) document.getElementById("bkwarnt").textContent = lb ? "⚠️ Last backup was " + age + " days ago." : "⚠️ You haven't saved a backup yet. Your logs only live on this phone.";
 }
 
 /* ---------- Log helpers ---------- */
@@ -333,6 +368,7 @@ function saveToday(ex) {
   if (s.some(x => x.ok)) l.push({ d: today(), t: Date.now(), s });
   logs[ex.id] = l.sort((a, b) => a.d < b.d ? -1 : 1).slice(-60);
   LS.set("lift5Logs", logs);
+  autoBackup();
 }
 const fmtSet = x => (x.w === "" || x.w == null ? "BW" : x.w) + "×" + x.r;
 function tipFor(ex, last) {
@@ -491,6 +527,8 @@ if (!curDay) curDay = suggestDay();
 render();
 renderBackup();
 document.getElementById("bkbtn").onclick = backup;
+document.getElementById("bkwarnbtn").onclick = backup;
+try { const n = native(); if (n) n.postMessage({ type: "ready", empty: Object.keys(logs).length === 0 }); } catch (e) {}
 document.getElementById("rsfile").onchange = e => { if (e.target.files[0]) restore(e.target.files[0]); e.target.value = ""; };
 </script>
 </body>

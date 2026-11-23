@@ -26,4 +26,12 @@ in Safari tap **Save backup**, then in the app tap **Restore** and pick that fil
 
 ## Updating
 Changes pushed to `index.html` on GitHub show up in the app automatically (pull down to refresh).
-`iOS/Lift/index.html` is only the offline copy — copy the latest `index.html` over it when you rebuild.
+The app also saves the latest site every time it loads, so it works offline with the newest version.
+`iOS/Lift/index.html` is only the very-first-launch fallback; the tests fail if it differs from `index.html`.
+
+The project on the Mac (Desktop › ahmed-main) is a git copy of GitHub: in Xcode use **Integrate → Pull** to get changes.
+
+## Backups
+The iPhone app saves your logs automatically to **Files → On My iPhone → Lift → Lift backups**
+(`lift-latest.json` plus one file per day for 30 days). If the app's storage is ever empty, it restores the latest one by itself.
+Deleting the app deletes these too, so for a copy that survives that, tap **Save backup** → Save to Files → iCloud Drive now and then.

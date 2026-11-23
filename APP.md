@@ -16,8 +16,10 @@ Modeled on samab1/big-gunz. Program source: "Ahmed's 5-Day Muscle Plan" (interme
 
 ## Storage (localStorage, this phone only)
 - `lift5Logs`: { id: [{d:"YYYY-MM-DD", t:ms, s:[{w,r,ok}]}] } oldest first, max 60 sessions per exercise.
-- `lift5Day`: last tab. `lift5LastBackup`: date of last backup.
+- `lift5Day`: last tab. `lift5LastBackup`: date of last manual backup. `lift5LastAuto`: date of last iPhone-app auto-save.
 - Backup = downloads a JSON file; Restore merges by date (newest edit wins).
+- Reminder banner (`#bkwarn`) shows when there are logs, no recent auto-save, and no manual backup in 7+ days.
+- iPhone app bridge (`window.webkit.messageHandlers.lift`): page sends `autosave` (debounced, after every log change), `ready` (on load, `empty` = no logs) and `backup` (share sheet). App calls `window.liftAutosaved()` and `window.liftRestore(json)`.
 
 ## Videos
 Every ID was verified with `https://noembed.com/embed?url=https://www.youtube.com/watch?v=<ID>` (real channel + embeddable). Verify any new ID the same way before shipping.
@@ -76,7 +78,7 @@ Every ID was verified with `https://noembed.com/embed?url=https://www.youtube.co
 - `npm test` serves the folder on :8080 and runs `tests/app.spec.js` on an iPhone 15 screen in Safari (WebKit) and Chrome.
 - `npm run test:live` runs the same tests against https://ahmedbalani.github.io/ahmed/.
 - `npm run report` opens the last HTML report (screenshots + traces of failures).
-- Covers: 5 tabs load, no JS errors, every exercise 4 sets + has a video, every card opens with 4 set rows/muscle map/video, logging + rest timer + reload persistence, add-weight tip, timer buttons, backup download, no sideways scroll.
+- Covers: backup reminder, iPhone-app auto-save/restore bridge, offline copy (`iOS/Lift/index.html`) identical to `index.html`, 5 tabs load, no JS errors, every exercise 4 sets + has a video, every card opens with 4 set rows/muscle map/video, logging + rest timer + reload persistence, add-weight tip, timer buttons, backup download, no sideways scroll.
 - GitHub Actions (`.github/workflows/tests.yml`) runs them on every push to `main`, and every Monday also against the live site.
 - `package.json`, `tests/`, `.github/` are dev-only; the app is still just `index.html`.
 
@@ -85,3 +87,4 @@ Every ID was verified with `https://noembed.com/embed?url=https://www.youtube.co
 - **2026-11-17** — iPhone app wrapper in `iOS/` (WKWebView, offline fallback, share-sheet backup, dumbbell icon). Page `backup()` now uses the native bridge when present.
 - **2026-11-17b** — Every exercise is now 4 sets (user request). Footer stamp 2026-11-17b. Older logs with fewer sets just won't trigger the add-weight tip until a full 4-set session is logged.
 - **2026-11-23** — Added Playwright tests + GitHub Actions. Fixed a bug they found: `pendingRender` was never declared, so leaving a weight/reps box threw an error every time. Footer stamp 2026-11-23. Synced the offline copy in `iOS/Lift/index.html`.
+- **2026-11-23b** — Backup reminder banner after 7 days. iPhone app: auto-backup to Files → On My iPhone → Lift → Lift backups (latest + one per day, 30 days), auto-restore when storage is empty, offline copy refreshed from the live site on every load. Xcode 'recommended settings' applied (deployment target now Xcode's recommended; Personal Team saved in project). Test that `iOS/Lift/index.html` matches `index.html`.

@@ -3,9 +3,20 @@ import WebKit
 import UIKit
 
 // The app shows the live site, so changes pushed to GitHub show up without rebuilding.
-// If there's no internet, it falls back to the copy of index.html bundled in the app.
-// Both use the same web address, so your logs (localStorage) are the same either way.
+// Every time the live site loads, the app saves a copy of it. With no internet it shows that saved
+// copy (or, before the first successful load, the copy of index.html bundled in the app).
+// All of them use the same web address, so your logs (localStorage) are the same either way.
+//
+// Automatic backup: after every change the page sends its logs here and they're written to
+// Files → On My iPhone → Lift → "Lift backups". If the app's storage is ever empty on launch,
+// the newest automatic backup is put back.
 let siteURL = URL(string: "https://ahmedbalani.github.io/ahmed/")!
+let fm = FileManager.default
+let documentsDir = fm.urls(for: .documentDirectory, in: .userDomainMask)[0]
+let backupDir = documentsDir.appendingPathComponent("Lift backups", isDirectory: true)
+let latestBackup = backupDir.appendingPathComponent("lift-latest.json")
+let offlineCopy = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+    .appendingPathComponent("offline-index.html")
 let appBackground = UIColor(red: 0x12 / 255.0, green: 0x15 / 255.0, blue: 0x1b / 255.0, alpha: 1)
 
 @main
@@ -61,11 +72,29 @@ struct WebAppView: UIViewRepresentable {
         }
 
         func loadBundled() {
-            guard !usingBundled,
-                  let file = Bundle.main.url(forResource: "index", withExtension: "html"),
-                  let html = try? String(contentsOf: file, encoding: .utf8) else { return }
+            guard !usingBundled else { return }
+            // Prefer the copy saved the last time the live site loaded; fall back to the built-in one.
+            var html = try? String(contentsOf: offlineCopy, encoding: .utf8)
+            if html == nil, let file = Bundle.main.url(forResource: "index", withExtension: "html") {
+                html = try? String(contentsOf: file, encoding: .utf8)
+            }
+            guard let html else { return }
             usingBundled = true
             webView?.loadHTMLString(html, baseURL: siteURL)
+        }
+
+        // Live site loaded → save today's version of it for offline use.
+        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+            guard !usingBundled else { return }
+            var req = URLRequest(url: siteURL, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 20)
+            req.setValue("no-cache", forHTTPHeaderField: "Cache-Control")
+            URLSession.shared.dataTask(with: req) { data, response, _ in
+                guard let data, (response as? HTTPURLResponse)?.statusCode == 200,
+                      let html = String(data: data, encoding: .utf8),
+                      html.contains("lift5Logs") else { return }        // only save the real app page
+                try? fm.createDirectory(at: offlineCopy.deletingLastPathComponent(), withIntermediateDirectories: true)
+                try? data.write(to: offlineCopy, options: .atomic)
+            }.resume()
         }
 
         @objc func refresh(_ sender: UIRefreshControl) {
@@ -109,11 +138,42 @@ struct WebAppView: UIViewRepresentable {
             return nil
         }
 
-        // "Save backup" in the page → iOS share sheet (Save to Files, AirDrop, Messages…).
         func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-            guard let body = message.body as? [String: Any],
-                  body["type"] as? String == "backup",
-                  let json = body["json"] as? String else { return }
+            guard let body = message.body as? [String: Any], let type = body["type"] as? String else { return }
+            switch type {
+            case "backup": shareBackup(body)
+            case "autosave": autosave(body)
+            case "ready": if body["empty"] as? Bool == true { restoreIfNeeded() }
+            default: break
+            }
+        }
+
+        // Logs changed → write lift-latest.json plus one file per day (keeps the last 30 days).
+        private func autosave(_ body: [String: Any]) {
+            guard let json = body["json"] as? String, let data = json.data(using: .utf8) else { return }
+            do {
+                try fm.createDirectory(at: backupDir, withIntermediateDirectories: true)
+                try data.write(to: latestBackup, options: .atomic)
+                let day = ISO8601DateFormatter.string(from: Date(), timeZone: .current, formatOptions: [.withFullDate])
+                try data.write(to: backupDir.appendingPathComponent("lift-\(day).json"), options: .atomic)
+                let daily = (try? fm.contentsOfDirectory(atPath: backupDir.path)) ?? []
+                let old = daily.filter { $0.hasPrefix("lift-2") && $0.hasSuffix(".json") }.sorted().dropLast(30)
+                for name in old { try? fm.removeItem(at: backupDir.appendingPathComponent(name)) }
+                webView?.evaluateJavaScript("window.liftAutosaved && window.liftAutosaved()")
+            } catch {}
+        }
+
+        // App storage is empty (e.g. iOS cleared it) → put the newest automatic backup back.
+        private func restoreIfNeeded() {
+            guard let data = try? Data(contentsOf: latestBackup),
+                  let json = String(data: data, encoding: .utf8) else { return }
+            webView?.callAsyncJavaScript("return window.liftRestore && window.liftRestore(j)",
+                                         arguments: ["j": json], in: nil, in: .page, completionHandler: nil)
+        }
+
+        // "Save backup" in the page → iOS share sheet (Save to Files, AirDrop, Messages…).
+        private func shareBackup(_ body: [String: Any]) {
+            guard let json = body["json"] as? String else { return }
             let name = (body["name"] as? String) ?? "lift-backup.json"
             let file = FileManager.default.temporaryDirectory.appendingPathComponent(name)
             do { try json.write(to: file, atomically: true, encoding: .utf8) } catch { return }
