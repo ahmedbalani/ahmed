@@ -117,7 +117,7 @@ summary{cursor:pointer;color:var(--dim);font-size:.86rem}
   <ul>
     <li><b>Double progression:</b> when you hit the top of the rep range on every set, add a little weight next time. The app tells you when.</li>
     <li>Stop most sets with 1–2 reps left in the tank. Take the last set close to failure.</li>
-    <li>Rest 2–3 minutes on big lifts and 60–90 seconds on smaller ones. Tick a set and the rest timer starts.</li>
+    <li>Rest 45 seconds between sets. Tick a set and the rest timer starts.</li>
     <li>Log every set so you can beat last week. Leave weight blank for bodyweight. In Safari, tap “Save backup” every week (the app reminds you); the iPhone app backs up by itself.</li>
     <li>Every 6–8 weeks, take a lighter week, cutting sets about in half.</li>
     <li>Swap any exercise that causes pain for a similar one.</li>
@@ -436,7 +436,7 @@ function body(ex) {
       "<input inputmode='numeric' type='text' data-ex='" + ex.id + "' data-i='" + i + "' data-f='r' value='" + esc(s.r) + "' placeholder='" + esc(p.r || ex.hi) + "'>" +
       "<button class='ck' data-ck='" + ex.id + "' data-i='" + i + "'>✓</button></div>";
   });
-  h += "</div><div class='rest'>Rest " + (ex.ss ? "after both superset exercises · 60–90 s" : ex.big ? "2–3 min" : "60–90 s") + " · empty boxes use last time's numbers</div>";
+  h += "</div><div class='rest'>Rest " + (ex.ss ? "after both superset exercises · 45 s" : "45 s") + " · empty boxes use last time's numbers</div>";
   h += "<div class='lbl'>MUSCLES</div>" + bodyMap(ex.primary, ex.secondary) + "<div class='chips'>" +
     ex.primary.map(k => "<span class='chip p'>" + MNAME[k] + "</span>").join("") +
     ex.secondary.map(k => "<span class='chip s'>" + MNAME[k] + "</span>").join("") + "</div>";
@@ -502,8 +502,8 @@ document.addEventListener("click", ev => {
     s.ok = true; saveToday(ex); render(true);
     const lastSet = d.every(x => x.ok);
     if (ex.ss && ex.name.startsWith("Cable Curl")) toast("Straight to pushdowns — no rest");
-    else if (lastSet) { toast("✓ " + ex.name + " done"); startRest(ex.big ? 150 : 75, "Rest before next exercise"); }
-    else startRest(ex.big ? 150 : 75, "Rest · set " + (i + 2) + " next");
+    else if (lastSet) { toast("✓ " + ex.name + " done"); startRest(45, "Rest before next exercise"); }
+    else startRest(45, "Rest · set " + (i + 2) + " next");
   }
 });
 document.addEventListener("input", ev => {
